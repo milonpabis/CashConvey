@@ -1,0 +1,83 @@
+﻿<Window x:Class="CurrencyConverter.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CurrencyConverter"
+        mc:Ignorable="d"
+        Title="CashConvey" Icon="Images/icon.png" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight" MaxWidth="1000" MaxHeight="500" ResizeMode="CanMinimize">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="80"/>
+            <RowDefinition Height="80"/>
+            <RowDefinition Height="150"/>
+            <RowDefinition Height="150"/>
+        </Grid.RowDefinitions>
+        <Border Grid.Row="2" Width="800" CornerRadius="14" BorderThickness="5" Margin="100 0 100 0">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="DarkCyan" Offset="0.0"/>
+                    <GradientStop Color="Cyan" Offset="0.9"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <Border.BorderBrush>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="DarkCyan" Offset="0.0"/>
+                    <GradientStop Color="Cyan" Offset="0.9"/>
+                </LinearGradientBrush>
+            </Border.BorderBrush>
+            <Rectangle Grid.Row="2">
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Color="DarkCyan" Offset="0.0"/>
+                        <GradientStop Color="Cyan" Offset="0.9"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+        </Border>
+        <Label Content="CashConvey" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="48" FontWeight="Bold" FontFamily="Reem Kufi" Foreground="DarkCyan" />
+        <Label  Grid.Row="1" Name="lResult" Content="" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="32" FontWeight="Bold" FontFamily="Reem Kufi" Foreground="DarkCyan" />
+        <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <Label Foreground="AliceBlue" FontSize="22" Margin="150 20 0 0" FontWeight="Bold" >Amount:</Label>
+            <Label Foreground="AliceBlue" FontSize="22" Margin="150 20 0 0" FontWeight="Bold" >From:</Label>
+            <Label Foreground="AliceBlue" FontSize="22" Margin="200 20 0 0" FontWeight="Bold" >To:</Label>
+        </StackPanel>
+        <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <TextBox Name="tbAmount" PreviewKeyDown="tbAmount_KeyDown" Width="200" Height="40" FontSize="20" FontWeight="Bold" PreviewTextInput="TextBox_PreviewTextInput" Margin="150 20 0 0" VerticalContentAlignment="Center"/>
+            <ComboBox Name="cbFrom" Width="150" Height="40" FontSize="20" FontWeight="Bold" Margin="55 20 0 0"/>
+            <Image Source="/Images/arrow-right.png" Width="50" Height="50" Margin="35 20 0 0" />
+            <ComboBox Name="cbTo" Width="150" Height="40" FontSize="20" FontWeight="Bold" Margin="35 20 0 0"/>
+        </StackPanel>
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Name="btConvert" Width="200" Height="50" Content="Convert" Click="btConvert_Click" BorderThickness="0" Foreground="AliceBlue" Margin="0 0 10 35" FontWeight="Bold" FontSize="20">
+                <Button.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Color="DarkCyan" Offset="0.0"/>
+                        <GradientStop Color="Cyan" Offset="0.9"/>
+                    </LinearGradientBrush>
+                </Button.Background>
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="10"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+            <Button Name="btClear" Width="200" Height="50" Content="Clear" BorderThickness="0" Click="btClear_Click" Margin="10 0 0 35" Foreground="AliceBlue" FontWeight="Bold" FontSize="20">
+                <Button.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Color="DarkCyan" Offset="0.0"/>
+                        <GradientStop Color="Cyan" Offset="0.9"/>
+                    </LinearGradientBrush>
+                </Button.Background>
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="10"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+            
+        </StackPanel>
+        
+        
+    </Grid>
+</Window>
