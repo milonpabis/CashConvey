@@ -103,7 +103,7 @@
                     <Label Name="lbName" Content="Name" FontSize="28" Foreground="AliceBlue" FontFamily="Reem Kufi" FontWeight="Bold" Margin="380 20 0 0"/>
                 </StackPanel>
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
-                    <TextBox Name="tbRate" Height="40" Width="250" Margin="100 30 0 0" VerticalContentAlignment="Center" FontWeight="Bold" FontSize="24" FontFamily="Reem Kufi"/>
+                    <TextBox Name="tbRate" PreviewKeyDown="tbRate_PreviewKeyDown" PreviewTextInput="tbRate_PreviewTextInput" Height="40" Width="250" Margin="100 30 0 0" VerticalContentAlignment="Center" FontWeight="Bold" FontSize="24" FontFamily="Reem Kufi"/>
                     <TextBox Name="tbName" Height="40" Width="250" Margin="200 30 0 0" VerticalContentAlignment="Center" FontWeight="Bold" FontSize="24" FontFamily="Reem Kufi"/>
                 </StackPanel>
                 <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">

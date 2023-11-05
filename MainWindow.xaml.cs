@@ -44,8 +44,8 @@ namespace CurrencyConverter
 
         private void BindData()
         {
+            dt = new DataTable();
             string query = "select * from Currency_Data";
-            sqlConnection.Open();
             SqlCommand command = new SqlCommand(query, sqlConnection);
             SqlDataAdapter SDA = new SqlDataAdapter(command);
 
@@ -143,7 +143,45 @@ namespace CurrencyConverter
 
         private void btSave_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                if (lbData.SelectedItem != null)
+                {
+                    string nameToUpdate = ((KeyValuePair<string, double>)lbData.SelectedItem).Key;
 
+                    string query = "update Currency_Data set Name=@Name, Rate=@Rate where Name=@OldName";
+                    SqlCommand command = new SqlCommand(query, sqlConnection);
+                    sqlConnection.Open();
+                    command.Parameters.AddWithValue("@Name", tbName.Text);
+                    command.Parameters.AddWithValue("@Rate", double.Parse(tbRate.Text));
+                    command.Parameters.AddWithValue("@OldName", nameToUpdate);
+                    command.ExecuteScalar();
+                    
+                }
+                else
+                {
+                    string query = "insert into Currency_Data (Rate, Name) values (@Rate, @Name)";
+                    SqlCommand command = new SqlCommand(query, sqlConnection);
+                    sqlConnection.Open();
+                    command.Parameters.AddWithValue("@Rate", tbRate.Text);
+                    command.Parameters.AddWithValue("@Name", tbName.Text);
+                    command.ExecuteScalar();
+                    
+                }
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show(ex.ToString());
+            }
+            finally
+            {
+                sqlConnection.Close();
+                BindData();
+            }
+            
+            
+            
         }
 
         private void btCancel_Click(object sender, RoutedEventArgs e)
@@ -155,7 +193,19 @@ namespace CurrencyConverter
 
         private void btDelete_Click(object sender, RoutedEventArgs e)
         {
+            if( lbData.SelectedItem != null )
+            {
+                string nameToDel = ((KeyValuePair<string, double>)(lbData.SelectedItem)).Key;
+                string query = "delete from Currency_Data where Name = @Name";
+                SqlCommand command = new SqlCommand(query, sqlConnection);
+                sqlConnection.Open();
+                command.Parameters.AddWithValue("@Name", nameToDel);
+                command.ExecuteScalar();
+                sqlConnection.Close();
+                BindData();
 
+                lbData.SelectedItem = null;
+            }
         }
 
         private void lbData_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -166,6 +216,18 @@ namespace CurrencyConverter
                 tbRate.Text = ((KeyValuePair<string, double>)lbData.SelectedItem).Value.ToString();
             }
             
+        }
+
+        private void tbRate_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Space)
+                e.Handled = true;
+        }
+
+        private void tbRate_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            if( !int.TryParse(e.Text, out _) )
+                e.Handled = true;
         }
     }
 }
