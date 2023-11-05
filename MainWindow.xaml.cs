@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +13,16 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Data.SqlClient;
+using System.Data;
+using System.Configuration;
+
+// TODO:
+// - create listBox *
+// - create class that converts DataTable 2col data into Dictionary *
+// - make dictionary a property *
+// - connect database *
+// - implement logic with database
 
 namespace CurrencyConverter
 {
@@ -22,31 +31,65 @@ namespace CurrencyConverter
     /// </summary>
     public partial class MainWindow : Window
     {
+        DataTable dt = new DataTable();
+        SqlConnection sqlConnection;
+        string connectionString;
         public MainWindow()
         {
             InitializeComponent();
+            connectionString = $"Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=F:\\Desktop\\repos\\C#\\CurrencyConverter\\DataBase\\currencyDatamdf.mdf;Integrated Security=True";
+            sqlConnection = new SqlConnection(connectionString);
             BindData();
-            
-            
         }
 
         private void BindData()
         {
-            Dictionary<string, double> dictData = new Dictionary<string, double>();
-            dictData.Add("SELECT", 0);
-            dictData.Add("USD", 1);
-            dictData.Add("EUR", 0.95);
-            dictData.Add("PLN", 4.23);
-            dictData.Add("GBP", 0.82);
+            string query = "select * from Currency_Data";
+            sqlConnection.Open();
+            SqlCommand command = new SqlCommand(query, sqlConnection);
+            SqlDataAdapter SDA = new SqlDataAdapter(command);
 
-            cbFrom.ItemsSource = dictData;
-            cbTo.ItemsSource = dictData;
+            using (SDA)
+            {
+                SDA.Fill(dt);
+            }
+
+            var myTestDict = ConvertDataTable(dt);
+
+            cbFrom.ItemsSource = myTestDict;
+            cbTo.ItemsSource = myTestDict;
             cbFrom.DisplayMemberPath = "Key";
             cbTo.DisplayMemberPath = "Key";
 
             cbFrom.SelectedIndex = 0;
             cbTo.SelectedIndex = 0;
+
+            var dbData = new Dictionary<string, double>(myTestDict);
+            dbData.Remove("SELECT");
+
+            lbData.ItemsSource = dbData;
             
+            
+
+
+        }
+
+        private Dictionary<string, double> ConvertDataTable(DataTable dt)
+        {
+            Dictionary<string, double> readyDictionary = new Dictionary<string, double>();
+            foreach( DataRow row in dt.Rows )
+            {
+                if (row[1] != null && row[2] != null )
+                {
+                    string key = row[2].ToString();
+                    double value = double.Parse(row[1].ToString());
+                    readyDictionary[key] = value;
+                }
+               
+                   
+            }
+            return readyDictionary;
+
         }
 
         private void btConvert_Click(object sender, RoutedEventArgs e)
@@ -96,6 +139,33 @@ namespace CurrencyConverter
         {
             if (e.Key == Key.Space)
                 e.Handled = true;
+        }
+
+        private void btSave_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btCancel_Click(object sender, RoutedEventArgs e)
+        {
+            lbData.SelectedItem = null;
+            tbName.Text = String.Empty;
+            tbRate.Text = String.Empty;
+        }
+
+        private void btDelete_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void lbData_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if( lbData.SelectedItem != null )
+            {
+                tbName.Text = ((KeyValuePair<string, double>)lbData.SelectedItem).Key;
+                tbRate.Text = ((KeyValuePair<string, double>)lbData.SelectedItem).Value.ToString();
+            }
+            
         }
     }
 }
