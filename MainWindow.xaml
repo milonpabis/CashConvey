@@ -79,7 +79,7 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="80"/>
-                    <RowDefinition Height="150"/>
+                    <RowDefinition Height="100"/>
                     <RowDefinition Height="80"/>
                     <RowDefinition Height="150"/>
                 </Grid.RowDefinitions>
@@ -99,8 +99,8 @@
                     </Border.BorderBrush>
                 </Border>
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
-                    <Label Name="lbRate" Content="Rate" FontSize="28" Foreground="AliceBlue" FontFamily="Reem Kufi" FontWeight="Bold" Margin="100 20 0 0"/>
-                    <Label Name="lbName" Content="Name" FontSize="28" Foreground="AliceBlue" FontFamily="Reem Kufi" FontWeight="Bold" Margin="380 20 0 0"/>
+                    <Label Name="lbRate" Content="Rate" FontSize="28" Foreground="AliceBlue" FontFamily="Reem Kufi" FontWeight="Bold" Margin="100 0 0 0"/>
+                    <Label Name="lbName" Content="Name" FontSize="28" Foreground="AliceBlue" FontFamily="Reem Kufi" FontWeight="Bold" Margin="380 0 0 0"/>
                 </StackPanel>
                 <StackPanel Grid.Row="1" Orientation="Horizontal">
                     <TextBox Name="tbRate" PreviewKeyDown="tbRate_PreviewKeyDown" PreviewTextInput="tbRate_PreviewTextInput" Height="40" Width="250" Margin="100 30 0 0" VerticalContentAlignment="Center" FontWeight="Bold" FontSize="24" FontFamily="Reem Kufi"/>
@@ -147,7 +147,7 @@
                         </Button.Resources>
                     </Button>
                 </StackPanel>
-                <ListBox SelectionChanged="lbData_SelectionChanged" Name="lbData" Grid.Row="3" Width="600" Margin="150,0,150,10" >
+                <ListBox SelectionChanged="lbData_SelectionChanged" Name="lbData" Grid.Row="3" Width="620" Margin="150,0,150,10" >
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">

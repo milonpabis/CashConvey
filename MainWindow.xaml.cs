@@ -17,6 +17,9 @@ using System.Data.SqlClient;
 using System.Data;
 using System.Configuration;
 
+using System.Net.Http;
+using Newtonsoft.Json;
+
 // TODO:
 // - create listBox *
 // - create class that converts DataTable 2col data into Dictionary *
@@ -24,21 +27,78 @@ using System.Configuration;
 // - connect database *
 // - implement logic with database
 
+
 namespace CurrencyConverter
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+    /// 
+
+
     public partial class MainWindow : Window
     {
+        Root val = new Root();
         DataTable dt = new DataTable();
         SqlConnection sqlConnection;
         string connectionString;
+        string appID = "d80a27c92f4c41b2804b1ea53e4f96f0";
+        string endpoint;
+        public class Root
+        {
+            public Rate rates { get; set; }
+        }
+
+        public class Rate
+        {
+            public double USD { get; set; } = 1;
+            public double JPY { get; set; } = 11;
+            public double EUR { get; set; } = 1;
+            public double PLN { get; set; } = 1;
+            public double INR { get; set; } = 1;
+            public double CZK { get; set; } = 1;
+            public double NZD { get; set; } = 1;
+            public double ISK { get; set; } = 1;
+            public double PHP { get; set; } = 1;
+        }
+
         public MainWindow()
         {
             InitializeComponent();
+            endpoint = $"https://openexchangerates.org/api/latest.json?app_id={appID}";
             connectionString = $"Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=F:\\Desktop\\repos\\C#\\CurrencyConverter\\DataBase\\currencyDatamdf.mdf;Integrated Security=True";
             sqlConnection = new SqlConnection(connectionString);
+            GetValue();
+        }
+
+        private static async Task<Root> GetData<T>(string url)
+        {
+            var myRoot = new Root();
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    client.Timeout = TimeSpan.FromSeconds(30);
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    if(response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        string responseString = await response.Content.ReadAsStringAsync();
+                        var ResponceObject = JsonConvert.DeserializeObject<Root>(responseString);
+                        if (ResponceObject != null)
+                            return ResponceObject;
+                    }
+                    return myRoot;
+                }
+            }
+            catch
+            {
+                return myRoot;
+            }
+        }
+
+        private async void GetValue()
+        {
+            val = await GetData<Root>(endpoint);
             BindData();
         }
 
@@ -56,22 +116,32 @@ namespace CurrencyConverter
 
             var myTestDict = ConvertDataTable(dt);
 
-            cbFrom.ItemsSource = myTestDict;
-            cbTo.ItemsSource = myTestDict;
+            var apiDict = new Dictionary<string, double>();
+            apiDict.Add("USD", val.rates.USD);
+            apiDict.Add("PLN", val.rates.PLN);
+            apiDict.Add("EUR", val.rates.EUR);
+            apiDict.Add("ISK", val.rates.ISK);
+            apiDict.Add("CZK", val.rates.CZK);
+            apiDict.Add("JPY", val.rates.JPY);
+            apiDict.Add("NZD", val.rates.NZD);
+            apiDict.Add("INR", val.rates.INR);
+            apiDict.Add("PHP", val.rates.PHP);
+            
+            foreach (KeyValuePair<string, double> pair in myTestDict)
+            {
+                apiDict.Add(pair.Key, pair.Value);
+            }
+
+            cbFrom.ItemsSource = apiDict;
+            cbTo.ItemsSource = apiDict;
             cbFrom.DisplayMemberPath = "Key";
             cbTo.DisplayMemberPath = "Key";
 
             cbFrom.SelectedIndex = 0;
             cbTo.SelectedIndex = 0;
 
-            var dbData = new Dictionary<string, double>(myTestDict);
-            dbData.Remove("SELECT");
 
-            lbData.ItemsSource = dbData;
-            
-            
-
-
+            lbData.ItemsSource = myTestDict;
         }
 
         private Dictionary<string, double> ConvertDataTable(DataTable dt)
@@ -84,19 +154,15 @@ namespace CurrencyConverter
                     string key = row[2].ToString();
                     double value = double.Parse(row[1].ToString());
                     readyDictionary[key] = value;
-                }
-               
-                   
+                }   
             }
             return readyDictionary;
-
         }
 
         private void btConvert_Click(object sender, RoutedEventArgs e)
         {
-            if (cbFrom.SelectedItem != null && cbTo.SelectedItem != null && cbTo.SelectedIndex != 0 && cbFrom.SelectedIndex != 0)
+            if (cbFrom.SelectedItem != null && cbTo.SelectedItem != null)
             {
-                
                 var selectedFrom = ((KeyValuePair<string, double>)cbFrom.SelectedItem).Value;
                 var selectedTo = ((KeyValuePair<string, double>)cbTo.SelectedItem).Value;
 
@@ -178,10 +244,7 @@ namespace CurrencyConverter
             {
                 sqlConnection.Close();
                 BindData();
-            }
-            
-            
-            
+            } 
         }
 
         private void btCancel_Click(object sender, RoutedEventArgs e)
@@ -215,7 +278,6 @@ namespace CurrencyConverter
                 tbName.Text = ((KeyValuePair<string, double>)lbData.SelectedItem).Key;
                 tbRate.Text = ((KeyValuePair<string, double>)lbData.SelectedItem).Value.ToString();
             }
-            
         }
 
         private void tbRate_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -227,6 +289,7 @@ namespace CurrencyConverter
         private void tbRate_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             if( !int.TryParse(e.Text, out _) )
+                if( e.Text != "," )
                 e.Handled = true;
         }
     }
